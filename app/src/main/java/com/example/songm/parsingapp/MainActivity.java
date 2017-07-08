@@ -39,15 +39,22 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
 
                 try {
-                    List<HashMap<String,Object>> map =
                     JSONArray jsonObject = response.getJSONArray("list");
 
-                    for(JSONObject o : jsonObject.size()){
+                    if(jsonObject!=null) {
+                        text.setText("" + jsonObject.length());
+                        for(int i = 0; i<jsonObject.length();i++){
+                            JSONObject o = jsonObject.getJSONObject(i);
 
+                            String addr = o.getString("addr");
+                            double dmX = o.getDouble("dmX");
+                            double dmY = o.getDouble("dmY");
+                            String oper = o.getString("oper");
+                            String stationName = o.getString("stationName");
+
+                            text.setText(addr+"    "+dmX+"    "+dmY+"   "+oper+"   "+stationName);
+                        }
                     }
-                    String o = response.getString("totalCount");
-                    if(jsonObject!=null)
-                        text.setText(jsonObject.);
                     else
                         text.setText("널");
                 } catch (JSONException e) {
