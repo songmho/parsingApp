@@ -1,8 +1,12 @@
 package com.example.songm.parsingapp;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
 import com.android.volley.NetworkResponse;
@@ -19,20 +23,26 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         final TextView text = (TextView)findViewById(R.id.txt);
+        final AppCompatAutoCompleteTextView autoTextView = (AppCompatAutoCompleteTextView)findViewById(R.id.autoTextView);
+
+        final List<String> addrList = new ArrayList<>();
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
+        context = this;
         String url = "http://openapi.airkorea.or.kr/openapi/services/rest/MsrstnInfoInqireSvc/getMsrstnList?pageNo=1&numOfRows=400&ServiceKey=NCPIDFE%2F7buZ0eIVTd6x6iqFLtZRkGcVW%2FZuKO1g%2BM9cCN8YBQBmPIKzaP%2B9MTfyyNMhXDS3SkK8%2FjiyINYe0A%3D%3D&_returnType=json";
 
         final SharedPreferences preferences =getSharedPreferences("Pref",MODE_PRIVATE);
@@ -59,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
                             String oper = o.getString("oper");
                             String stationName = o.getString("stationName");
 
+                            addrList.add(addr);
+
                             text.setText(addr+"    "+dmX+"    "+dmY+"   "+oper+"   "+stationName);
 
                             JSONObject curObs = new JSONObject();
@@ -76,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
                         editor.commit();
 
                         text.setText(""+preferences.getString("Observe","null"));
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,android.R.layout.simple_dropdown_item_1line,addrList);
+                        autoTextView.setAdapter(adapter);
                     }
                     else
                         text.setText("널");
